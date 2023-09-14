@@ -59,7 +59,7 @@ try:
     import matplotlib.transforms as transforms
     import matplotlib.cm
     import shapely.geometry
-    import descartes
+    from . import descartes
 except (ImportError , RuntimeError) as err:
     warnings.warn(str(err) + '. It will not be possible to display designs.')
 
