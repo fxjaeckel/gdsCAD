@@ -36,8 +36,7 @@ contain references to other Cells, or contain drawing geometry.
     gdsCAD (based on gdspy) is released under the terms of the GNU GPL
     
 """
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 
 import sys
@@ -61,7 +60,7 @@ try:
     import matplotlib.cm
     import shapely.geometry
     import descartes
-except ImportError as err:
+except (ImportError , RuntimeError) as err:
     warnings.warn(str(err) + '. It will not be possible to display designs.')
 
 try:
@@ -69,9 +68,12 @@ try:
 except ImportError as err:
     warnings.warn(str(err) + '. It will not be possible to import DXF artwork.')
 
-if sys.version > '3':
+if (sys.version_info > (3, 0)):
     long = int
-
+    PY3 = True
+else:
+    PY3 = False
+    
 default_layer = 1
 default_datatype = 0
 
@@ -1587,7 +1589,7 @@ class Cell(object):
             cell_area = {}
             for element in self.elements:
                 element_area = element.area(True)
-                for ll in element_area.iterkeys():
+                for ll in element_area.keys():
                     if ll in cell_area:
                         cell_area[ll] += element_area[ll]
                     else:
@@ -1872,7 +1874,7 @@ class CellReference(ReferenceBase):
             if by_layer:
                 factor = self.magnification * self.magnification
                 cell_area = self.ref_cell.area(True)
-                for kk in cell_area.iterkeys():
+                for kk in cell_area.keys():
                     cell_area[kk] *= factor
                 return cell_area
             else:
@@ -2077,7 +2079,7 @@ class CellArray(ReferenceBase):
             factor = self.cols * self.rows * self.magnification * self.magnification
         if by_layer:
             cell_area = self.ref_cell.area(True)
-            for kk in cell_area.iterkeys():
+            for kk in cell_area.keys():
                 cell_area[kk] *= factor
             return cell_area
         else:
@@ -2248,8 +2250,18 @@ def GdsImport(infile, rename={}, layers={}, datatypes={}, verbose=True, unit=1e-
             if verbose==2:
                 print(data[0], end=' ')
         elif 'BGNLIB' == rname:
-            kwargs['created'] = datetime.datetime(*data.tolist()[:6])
-            kwargs['modified'] = datetime.datetime(*data.tolist()[6:])
+            try:
+                kwargs['created'] = datetime.datetime(*data.tolist()[:6])
+            except:
+                warnings.warn("File created date may be corrupt. Resetting to right now.", stacklevel=2)
+                kwargs['created'] = datetime.datetime.today()
+                
+            try:
+                kwargs['modified'] = datetime.datetime(*data.tolist()[6:])
+            except:
+                warnings.warn("File modify date may be corrupt. Resetting to right now.", stacklevel=2)
+                kwargs['modified'] = datetime.datetime.today()
+                
             if verbose==2:
                 print("created %d/%d/%d,%d:%d:%d modified %d/%d/%d,%d:%d:%d" % tuple(data.tolist()), end=' ')
         elif 'LIBNAME' == rname:
@@ -2517,8 +2529,10 @@ def _clean_args(cls, kwargs):
     """
     Remove arguments with unknown names from kwargs 
     """
-    
-    arg_names = inspect.getargspec(cls.__init__).args
+    if PY3:
+        arg_names = inspect.getfullargspec(cls.__init__).args
+    else:
+        arg_names = inspect.getargspec(cls.__init__).args
     return {k: kwargs[k] for k in kwargs if k in arg_names}
 
 def _create_polygon(**kwargs):
