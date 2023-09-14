@@ -18,12 +18,20 @@ Documentation
 =============
 
 The original documentation can be found at:
-    http://pythonhosted.org/gdsCAD/#
+    http://pythonhosted.org/gdsCAD/
 
 
 Installation
 ========
 
+Clone the repository:
+    git clone https://github.com/fxjaeckel/gdsCAD.git
+
+Change to the local copy:
+    cd gdsCAD
+
+Perform a local pip install:
+    pip install -e .
 
 Gallery
 =======
