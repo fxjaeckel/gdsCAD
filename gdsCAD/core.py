@@ -447,7 +447,7 @@ class Boundary(ElementBase):
             data_size = 4 + 8 * entry_points
 
             data += struct.pack('>HH', data_size, 0x1003)
-            data += gds_coordinates[export_pos:export_pos+entry_points].tostring()
+            data += gds_coordinates[export_pos:export_pos+entry_points].tobytes()
 
             export_pos += entry_points
 
@@ -585,7 +585,7 @@ class Path(ElementBase):
 
         data = struct.pack('>12H', 4, 0x0900, 6, 0x0D02, self.layer, 6, 0x0E02, self.datatype, 6, 0x2102, self.pathtype, 8)
         data += struct.pack('>HL2H', 0x0F03, int(round(self.width * multiplier)), 4 + 8 * gds_coordinates.shape[0], 0x1003)
-        data += gds_coordinates.tostring()
+        data += gds_coordinates.tobytes()
         return data + struct.pack('>2H', 4, 0x1100)
 
     def to_boundary(self):
