@@ -527,7 +527,7 @@ class LineLabel(core.Elements):
             current_stroke = list()
             for coordinate in zip(vertices[::2], vertices[1::2]):
                 if coordinate[0] == ' ' and coordinate[1] == 'R':
-                    strokes.append(np.array(current_stroke, dtype=np.int))
+                    strokes.append(np.array(current_stroke, dtype=int))
                     current_stroke = list()
                     continue
 
@@ -535,7 +535,7 @@ class LineLabel(core.Elements):
                 tmp_coords[1] = -tmp_coords[1]
                 current_stroke.append(tmp_coords)
 
-            strokes.append(np.array(current_stroke, dtype=np.int))
+            strokes.append(np.array(current_stroke, dtype=int))
 
             self._hershey_table[char_id] = {'strokes': strokes, 'left_pos': left, 'right_pos': right}
 
