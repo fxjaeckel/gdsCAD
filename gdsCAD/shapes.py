@@ -492,22 +492,23 @@ class LineLabel(core.Elements):
         append_next_line = False
         vertices_count = 0
         target_vertices_count = 0
-        for line in open(fname, 'r').readlines():
-            line = line.rstrip('\n')
-
-            # Skip empty lines
-            if not len(line):
-                continue
-
-            if vertices_count == target_vertices_count:
-                # New entry begins here
-                target_vertices_count = int(line[5:8]) * 2
-                vertices_count = len(line[8:])
-                lines.append(line)
-            else:
-                assert vertices_count < target_vertices_count, 'Got more vertices then specified'
-                vertices_count += len(line)
-                lines[-1] += line
+        with open(fname, 'r') as inFile:
+            for line in inFile:
+                line = line.rstrip('\n')
+    
+                # Skip empty lines
+                if not len(line):
+                    continue
+    
+                if vertices_count == target_vertices_count:
+                    # New entry begins here
+                    target_vertices_count = int(line[5:8]) * 2
+                    vertices_count = len(line[8:])
+                    lines.append(line)
+                else:
+                    assert vertices_count < target_vertices_count, 'Got more vertices then specified'
+                    vertices_count += len(line)
+                    lines[-1] += line
 
         # Parse the lines we have just read
         for line in lines:
@@ -555,19 +556,20 @@ class LineLabel(core.Elements):
         from_ascii = dict()
 
         current_code = 32
-        for line in open(fname, 'r').readlines():
-            for definition in line.rstrip().split():
-                # Either one number or a range of number is specified
-                if not '-' in definition:
-                    to_ascii[int(definition)] = current_code
-                    from_ascii[current_code] = int(definition)
-                    current_code += 1
-                else:
-                    start, stop = [int(x) for x in definition.split('-')]
-                    for i in range(start, stop+1):
-                        to_ascii[i] = current_code
-                        from_ascii[current_code] = i
+        with open(fname, 'r') as inFile:
+            for line in inFile:
+                for definition in line.rstrip().split():
+                    # Either one number or a range of number is specified
+                    if not '-' in definition:
+                        to_ascii[int(definition)] = current_code
+                        from_ascii[current_code] = int(definition)
                         current_code += 1
+                    else:
+                        start, stop = [int(x) for x in definition.split('-')]
+                        for i in range(start, stop+1):
+                            to_ascii[i] = current_code
+                            from_ascii[current_code] = i
+                            current_code += 1
 
         self._hershey_ascii_lookup_table[table_name] = {'to_ascii': to_ascii, 'from_ascii': from_ascii}
 
