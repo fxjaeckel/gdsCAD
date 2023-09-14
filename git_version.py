@@ -45,7 +45,9 @@ def git_version():
                   stdout=PIPE, stderr=PIPE)
         p.stderr.close()
         line = p.stdout.readlines()[0].decode('utf-8')
-        return line.strip()
+        parts = line.strip().split("-")
+        # make the version string PEP440 compliant (local version string with "+", not a dash)
+        return parts[0] + "+" + parts[1] + "." + parts[2]
 
     except:
         return None
