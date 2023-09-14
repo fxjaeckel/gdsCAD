@@ -8,18 +8,21 @@ use. It excels particularly in generating designs with multiple incrementally
 adjusted objects. gdsCAD uses matplotlib to visualize everything from individual
 geometry primitives to the entire layout.
 
+Sadly, the original author (Andrew Mark, https://github.com/hohlraum) does not seem to maintain this package anymore.
+There are a number of old fixes/pull requests, but these have not been merged into main repository, see https://github.com/hohlraum/gdsCAD/pulls.
+Most importantly, Apfelkuchen contributed Python3 compatibility (https://github.com/Apfelkuchen/gdsCAD/tree/Python3_compatibility)
+This fork aims to keep a working version for work at the McCammon X-ray Astrophysics lab at UW Madison.
+
+
 Documentation
 =============
 
-Complete documentation can be found at:
+The original documentation can be found at:
     http://pythonhosted.org/gdsCAD/#
 
 
-Download
+Installation
 ========
-
-The package can be downloaded for installation via easy_install at
-    https://pypi.python.org/pypi/gdsCAD
 
 
 Gallery
